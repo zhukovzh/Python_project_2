@@ -20,6 +20,14 @@ class Polynomial:
             for i in coefficients:
                 a.append(i)
             self.polynomial = a
+        i = len(self.polynomial) - 1
+        while i > 0:
+            if self.polynomial[i] == 0:
+                self.polynomial.pop()
+                i -= 1
+            else:
+                break
+
 
     def __repr__(self):
         return "Polynomial " + str(self.polynomial)
@@ -73,18 +81,19 @@ class Polynomial:
                     a[i] += self.polynomial[i]
                 if len(other.polynomial) > i:
                     a[i] += other.polynomial[i]
-            self.polynomial = a
-            i = len(self.polynomial) - 1
+            r = Polynomial(a)
+            i = len(r.polynomial) - 1
             while i > 0:
-                if self.polynomial[i] == 0:
-                    self.polynomial.pop()
+                if r.polynomial[i] == 0:
+                    r.polynomial.pop()
                     i -= 1
                 else:
                     break
-            return self
+            return r
         else:
-            self.polynomial[0] += other
-            return self
+            r = Polynomial(self.polynomial[:])
+            r.polynomial[0] += other
+            return r
 
     __radd__ = __add__
 
@@ -101,18 +110,19 @@ class Polynomial:
                     a[i] += self.polynomial[i]
                 if len(other.polynomial) > i:
                     a[i] -= other.polynomial[i]
-            self.polynomial = a
-            i = len(self.polynomial) - 1
+            r = Polynomial(a)
+            i = len(r.polynomial) - 1
             while i > 0:
-                if self.polynomial[i] == 0:
-                    self.polynomial.pop()
+                if r.polynomial[i] == 0:
+                    r.polynomial.pop()
                     i -= 1
                 else:
                     break
-            return self
+            return r
         else:
-            self.polynomial[0] -= other
-            return self
+            r = Polynomial(self.polynomial[:])
+            r.polynomial[0] -= other
+            return r
 
     def __rsub__(self, other):
         return -(self - other)
@@ -129,12 +139,13 @@ class Polynomial:
         return len(self.polynomial) - 1
 
     def der(self, d=1):
+        r = Polynomial(self.polynomial[:])
         for i in range(d):
             a = []
-            for i in range(1, len(self.polynomial)):
-                a.append(self.polynomial[i] * i)
-            self.polynomial = a
-        return self
+            for i in range(1, len(r.polynomial)):
+                a.append(r.polynomial[i] * i)
+            r.polynomial = a
+        return r
 
     def __mul__(self, other):
         if isinstance(other, Polynomial):
@@ -142,11 +153,12 @@ class Polynomial:
             for i in range(len(self.polynomial)):
                 for j in range(len(other.polynomial)):
                     a[i + j] += self.polynomial[i] * other.polynomial[j]
-            self.polynomial = a
+            r = Polynomial(a)
         else:
-            for i in range(len(self.polynomial)):
-                self.polynomial[i] *= other
-        return self
+            r = Polynomial(self.polynomial[:])
+            for i in range(len(r.polynomial)):
+                r.polynomial[i] *= other
+        return r
 
     __rmul__ = __mul__
 
@@ -257,4 +269,3 @@ class QuadraticPolynomial(Polynomial):
             else:
                 return [(-self.polynomial[1] - D ** 0.5) / (2 * self.polynomial[2]), (-self.polynomial[1] + D ** 0.5) / (2 * self.polynomial[2])]
 
-            
